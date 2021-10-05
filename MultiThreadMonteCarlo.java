@@ -1,3 +1,4 @@
+import java.text.BreakIterator;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -11,21 +12,49 @@ public class MultiThreadMonteCarlo {
     static class Task implements Callable<Long> {
 
         private Long total_points;
-        private int[] posValues;
+        private int quadrant;
 
-        public Task (Long total_points, int[] posValues){
+        public Task (Long total_points, int quad){
             this.total_points = total_points;
-            this.posValues = posValues;
+            this.quadrant = quad;
         }
 
         public Long call(){
             long withinCircle = 0L;
-            int minX = posValues[0];
-            int maxX = posValues[1];
-            int minY = posValues[2];
-            int maxY = posValues[3];
+            int minX;
+            int maxX;
+            int minY;
+            int maxY;
     
             for(int i=0; i<total_points; i++){
+
+                switch(quadrant){
+                    case 1: minX = -1;
+                            maxX = 0;
+                            minY = 0;
+                            maxY = 1;
+                            break;
+                    case 2: minX = 0;
+                            maxX = 1;
+                            minY = 0;
+                            maxY = 1;
+                            break;
+                    case 3: minX = 0;
+                            maxX = 1;
+                            minY = -1;
+                            maxY = 0;
+                            break;
+                    case 4: minX = -1;
+                            maxX = 0;
+                            minY = -1;
+                            maxY = 0;
+                            break;
+                    default: minX = 0;
+                             maxX = 0;
+                             minY = 0;
+                             maxY = 0;
+                             break;
+                }
 
                 double x = ThreadLocalRandom.current().nextDouble(minX, maxX);
                 double y = ThreadLocalRandom.current().nextDouble(minY, maxY);
@@ -43,14 +72,6 @@ public class MultiThreadMonteCarlo {
             long total_points = 200_000L;
             int number_of_threads = 4;
 
-            int[][] quadPosValues = new int[][] {
-                new int[] {-1, 0, 0, 1},
-                new int[] {0, 1, 0, 1},
-                new int[] {0, 1, -1, 0},
-                new int[] {-1, 0, -1, 0}
-            };
-
-
             ExecutorService es = Executors.newFixedThreadPool(number_of_threads);
 
             for (int i=0; i<3; i++) {
@@ -59,7 +80,7 @@ public class MultiThreadMonteCarlo {
                 List<Future<Long>> futures = new ArrayList<>();
                 
                 for (int j = 1; j <= number_of_threads; j++){
-                    Callable<Long> task = new Task(total_points / number_of_threads, quadPosValues[j-1]);
+                    Callable<Long> task = new Task(total_points / number_of_threads, j);
                     futures.add(es.submit(task));
                 }
                 
