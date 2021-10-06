@@ -11,20 +11,22 @@ public class MultiThreadMonteCarlo {
     static class Task implements Callable<Long> {
 
         private Long total_points;
-        private int[] posValues;
-
-        public Task (Long total_points, int[] posValues){
+        private int minX;
+        private int minY;
+        private int maxX;
+        private int maxY;
+        
+        public Task (Long total_points, int minX, int maxX, int minY, int maxY){
             this.total_points = total_points;
-            this.posValues = posValues;
+            this.maxX = maxX;
+            this.maxY = maxY;
+            this.minX = minX;
+            this.minY = minY;
         }
 
         public Long call(){
             long withinCircle = 0L;
-            int minX = posValues[0];
-            int maxX = posValues[1];
-            int minY = posValues[2];
-            int maxY = posValues[3];
-    
+
             for(int i=0; i<total_points; i++){
 
                 double x = ThreadLocalRandom.current().nextDouble(minX, maxX);
@@ -42,15 +44,7 @@ public class MultiThreadMonteCarlo {
         try { 
             long total_points = 200_000L;
             int number_of_threads = 4;
-
-            int[][] quadPosValues = new int[][] {
-                new int[] {-1, 0, 0, 1},
-                new int[] {0, 1, 0, 1},
-                new int[] {0, 1, -1, 0},
-                new int[] {-1, 0, -1, 0}
-            };
-
-
+            
             ExecutorService es = Executors.newFixedThreadPool(number_of_threads);
 
             for (int i=0; i<3; i++) {
@@ -58,10 +52,15 @@ public class MultiThreadMonteCarlo {
                 long withinCircle = 0L;
                 List<Future<Long>> futures = new ArrayList<>();
                 
-                for (int j = 1; j <= number_of_threads; j++){
-                    Callable<Long> task = new Task(total_points / number_of_threads, quadPosValues[j-1]);
-                    futures.add(es.submit(task));
-                }
+                Callable<Long> task1 = new Task(total_points / number_of_threads, -1, 0, 0, 1);
+                Callable<Long> task2= new Task(total_points / number_of_threads, 0, 1, 0, 1);
+                Callable<Long> task3 = new Task(total_points / number_of_threads, 0, 1, -1, 0);
+                Callable<Long> task4 = new Task(total_points / number_of_threads, -1, 0, -1, 0);
+
+                futures.add(es.submit(task1));
+                futures.add(es.submit(task2));
+                futures.add(es.submit(task3));
+                futures.add(es.submit(task4));
                 
                 try { 
                     for (Future<Long> f : futures){
