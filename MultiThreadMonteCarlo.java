@@ -25,36 +25,36 @@ public class MultiThreadMonteCarlo {
             int maxX;
             int minY;
             int maxY;
-
-            switch(quadrant){
-                case 1: minX = -1;
-                        maxX = 0;
-                        minY = 0;
-                        maxY = 1;
-                        break;
-                case 2: minX = 0;
-                        maxX = 1;
-                        minY = 0;
-                        maxY = 1;
-                        break;
-                case 3: minX = 0;
-                        maxX = 1;
-                        minY = -1;
-                        maxY = 0;
-                        break;
-                case 4: minX = -1;
-                        maxX = 0;
-                        minY = -1;
-                        maxY = 0;
-                        break;
-                default: minX = 0;
-                         maxX = 0;
-                         minY = 0;
-                         maxY = 0;
-                         break;
-            }
     
             for(int i=0; i<total_points; i++){
+
+                switch(quadrant){
+                    case 1: minX = -1;
+                            maxX = 0;
+                            minY = 0;
+                            maxY = 1;
+                            break;
+                    case 2: minX = 0;
+                            maxX = 1;
+                            minY = 0;
+                            maxY = 1;
+                            break;
+                    case 3: minX = 0;
+                            maxX = 1;
+                            minY = -1;
+                            maxY = 0;
+                            break;
+                    case 4: minX = -1;
+                            maxX = 0;
+                            minY = -1;
+                            maxY = 0;
+                            break;
+                    default: minX = 0;
+                             maxX = 0;
+                             minY = 0;
+                             maxY = 0;
+                             break;
+                }
 
                 double x = ThreadLocalRandom.current().nextDouble(minX, maxX);
                 double y = ThreadLocalRandom.current().nextDouble(minY, maxY);
