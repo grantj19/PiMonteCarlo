@@ -54,8 +54,8 @@ public class MultiThreadMonteCarlo {
             ExecutorService es = Executors.newFixedThreadPool(number_of_threads);
 
             for (int i=0; i<3; i++) {
-                long withinCircle = 0L;
                 Instant startTime = Instant.now();
+                long withinCircle = 0L;
                 List<Future<Long>> futures = new ArrayList<>();
                 
                 for (int j = 1; j <= number_of_threads; j++){
